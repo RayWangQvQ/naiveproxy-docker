@@ -2,11 +2,12 @@ version: '3.4'
 
 services:
   naive:
-    image: golang
-    container_name: go
+    image: zai7lou/naiveproxy-docker
+    container_name: naiveproxy
     ports:
       - 80:80
       - 443:443
     tty: true
     volumes:
-      - ./naive:/naive
+      - ./data:/data
+    command: ["/bin/bash", "/naive/entry.sh"]
