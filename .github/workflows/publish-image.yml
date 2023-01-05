@@ -80,8 +80,8 @@ jobs:
         name: GetDockerTagNames
         id: getDockerTags
         run: |
-          DOCKER_IMAGE_TAG="zai7lou/bilibili_tool_pro:${{ steps.getRepoTag.outputs.repoTag }}"
-          DOCKER_IMAGE_LATEST_TAG=",zai7lou/bilibili_tool_pro:latest"
+          DOCKER_IMAGE_TAG="zai7lou/naiveproxy-docker:${{ steps.getRepoTag.outputs.repoTag }}"
+          DOCKER_IMAGE_LATEST_TAG=",zai7lou/naiveproxy-docker:latest"
           if [ "${{ github.event.inputs.manualTag }}" ] && [ "${{ github.event.inputs.manualWithLatestTag }}" == "false" ] ; then
             DOCKER_IMAGE_LATEST_TAG=""
           fi
