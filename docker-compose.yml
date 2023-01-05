@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  naive:
+    image: golang
+    container_name: go
+    ports:
+      - 80:80
+      - 443:443
+    tty: true
+    volumes:
+      - ./naive:/naive
