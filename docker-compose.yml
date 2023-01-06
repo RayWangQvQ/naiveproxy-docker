@@ -10,4 +10,4 @@ services:
     tty: true
     volumes:
       - ./data:/data
-    command: ["/bin/bash", "/naive/entry.sh"]
+    command: ["/bin/bash", "/data/entry.sh"]

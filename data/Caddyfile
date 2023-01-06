@@ -9,6 +9,5 @@ route {
   }
  reverse_proxy  {{fakeHost}}  { #伪装网址
    header_up  Host  {upstream_hostport}
-   header_up  X-Forwarded-Host  {host}
   }
 }
