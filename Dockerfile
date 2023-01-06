@@ -15,7 +15,9 @@ WORKDIR /app
 
 COPY --from=build /go/caddy ./caddy
 
+# https://github.com/abiosoft/caddy-docker/issues/173
 RUN apt-get update \
+    && apt-get install -y ca-certificates \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
