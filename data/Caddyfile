@@ -1,13 +1,13 @@
-:443, {{domain}} #你的域名
-tls {{mail}} #你的邮箱
+:443, <host> #你的域名
+tls <mail> #你的邮箱
 route {
         forward_proxy {
-                basic_auth {{user}} {{pwd}} #用户名和密码
+                basic_auth <user> <pwd> #用户名和密码
                 hide_ip
                 hide_via
                 probe_resistance
         }
-        reverse_proxy {{fakeHost}} {
+        reverse_proxy <fakeHost> {
                 #伪装网址
                 header_up Host {upstream_hostport}
         }
