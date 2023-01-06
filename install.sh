@@ -356,6 +356,8 @@ else
     if [ $? -eq 0 ]; then
         docker-compose up -d
     else
+        docker stop naiveproxy
+        docker rm naiveproxy
         docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data zai7lou/naiveproxy-docker bash /data/entry.sh
     fi
 fi
