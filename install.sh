@@ -307,41 +307,41 @@ downloadDockerComposeFile() {
     eval $invocation
     rm -rf ./docker-compose.yml
     download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/docker-compose.yml docker-compose.yml
+    cat ./docker-compose.yml
 }
 
 downloadDataFiles() {
     eval $invocation
     mkdir -p ./data
-    cd ./data
 
     # entry
-    rm -rf ./entry.sh
-    download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/data/entry.sh entry.sh
+    rm -rf ./data/entry.sh
+    download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/data/entry.sh ./data/entry.sh
 
     # Caddyfile
-    rm -rf ./Caddyfile
-    download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/data/Caddyfile Caddyfile
-
-    cd ..
+    rm -rf ./data/Caddyfile
+    download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/data/Caddyfile ./data/Caddyfile
 }
 
 replaceCaddyfileConfigs() {
     eval $invocation
-    cd ./data
 
     # replace host
-    sed -i 's|<host>|'"$host"'|g' ./Caddyfile
+    sed -i 's|<host>|'"$host"'|g' ./data/Caddyfile
 
     # replace mail
-    sed -i 's|<mail>|'"$mail"'|g' ./Caddyfile
+    sed -i 's|<mail>|'"$mail"'|g' ./data/Caddyfile
 
     # replace user
-    sed -i 's|<user>|'"$user"'|g' ./Caddyfile
+    sed -i 's|<user>|'"$user"'|g' ./data/Caddyfile
 
     # replace pwd
-    sed -i 's|<pwd>|'"$pwd"'|g' ./Caddyfile
+    sed -i 's|<pwd>|'"$pwd"'|g' ./data/Caddyfile
 
-    cat ./Caddyfile
+    # replace fakeHost
+    sed -i 's|<fakeHost>|'"$fakeHost"'|g' ./data/Caddyfile
+
+    cat ./data/Caddyfile
 }
 
 downloadDockerComposeFile
@@ -351,14 +351,13 @@ replaceCaddyfileConfigs
 docker compose version
 if [ $? -eq 0 ]; then
     docker compose up -d
-    docker compose logs -f
 else
     docker-compose version
     if [ $? -eq 0 ]; then
         docker-compose up -d
-        docker-compose logs -f
     else
-        docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v ./data:/data zai7lou/naiveproxy-docker
-        docker logs naiveproxy -f
+        docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data zai7lou/naiveproxy-docker bash /data/entry.sh
     fi
 fi
+
+docker logs -f naiveproxy
