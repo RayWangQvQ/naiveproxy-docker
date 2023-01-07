@@ -150,6 +150,8 @@ else
     echo "pwd: $pwd"
 fi
 
+echo "fakeHost: $fakeHost"
+
 # args:
 # remote_path - $1
 get_http_header_curl() {
