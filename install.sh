@@ -348,9 +348,6 @@ downloadDockerComposeFile
 downloadDataFiles
 replaceCaddyfileConfigs
 
-docker stop naiveproxy
-docker rm naiveproxy
-
 docker compose version
 if [ $? -eq 0 ]; then
     docker compose up -d
