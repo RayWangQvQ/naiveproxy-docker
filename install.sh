@@ -367,31 +367,11 @@ echo ""
     docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data -v $PWD/share:/root/.local/share zai7lou/naiveproxy-docker bash /data/entry.sh
 }
 
-echo "Successfully created container"
+echo "Congratulations! Created container Successfully:"
 docker ps --filter "name=naiveproxy"
 echo ""
 echo ""
-
-# docker logs -f naiveproxy | sed '/certificate obtained successfully/Q'
-# docker logs -f naiveproxy | sed '/certificate obtained successfully/Q;echo "success"'
-
-# docker logs -f naiveproxy | while read line; do
-#     echo $line
-#     if echo "$line" | grep -q "certificate obtained successfully"; then
-#         exit 1
-#     fi
-# done
-
-docker logs -f naiveproxy | while read line; do
-    echo $line
-    if echo "$line" | grep -q "certificate obtained successfully"; then
-        echo ""
-        echo "Congratulations! Deploy Successfully."
-        echo "Next I'll try to turn off the log tracing process, or you can Ctrl+C to close it manually."
-        echo "Then you can connect the proxy using you client~~"
-        echo ""
-        ps -ef | grep "logs -f naiveproxy" | grep -v "grep" | awk '{print $2}' | xargs kill -9
-    fi
-done
+echo "You can run 'docker logs -f naiveproxy' to check the server logs, and press Ctrl+c to stop monitoring"
+echo "And then you can connect the proxy using you client~~"
 
 echo "finish"

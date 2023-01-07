@@ -64,10 +64,18 @@ curl -sSL -f -o ./install.sh https://raw.githubusercontent.com/RayWangQvQ/naivep
 - `--verbose`，输出详细日志
 - `-h`：help，查看参数信息
 
+容器run成功后，可以通过以下语句查看容器运行日志：
 
-运行到最后，颁发证书时会先ERROR飘红，别慌，等一会。
+```
+docker logs -f naiveproxy
+```
 
-如果最后日志出现`certificate obtained successfully`字样，就是成功了，可以去部署客户端了。
+`Ctrl + C` 可以退出日志追踪。
+
+
+第一次运行会自动颁发证书，日志可能会先ERROR飘红，别慌，等一会。
+
+如果最后日志出现`certificate obtained successfully`字样，就是颁发成功了，可以去部署客户端了。
 
 ![success](docs/imgs/cert-suc.png)
 
