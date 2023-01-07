@@ -101,3 +101,30 @@ vim ./data/Caddyfile
 ```
 docker exec -it naiveproxy /app/caddy reload --config /data/Caddyfile
 ```
+
+举个栗子，多用户可以直接添加`forward_proxy`，像这样：
+
+```
+:443, demo.test.tk #你的域名
+tls zhangsan@qq.com #你的邮箱
+route {
+        forward_proxy {
+                basic_auth zhangsan 1qaz@wsx #用户名和密码
+                hide_ip
+                hide_via
+                probe_resistance
+        }
+        forward_proxy {
+                basic_auth lisi 1234 #用户名和密码
+                hide_ip
+                hide_via
+                probe_resistance
+        }
+        reverse_proxy you.want.com {
+                #伪装网址
+                header_up Host {upstream_hostport}
+        }
+}
+```
+
+详细的配置语法可以参考Caddy的官方文档：[Caddy Doc](https://caddyserver.com/docs/)
