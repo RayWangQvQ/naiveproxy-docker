@@ -367,11 +367,11 @@ echo ""
     docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data -v $PWD/share:/root/.local/share zai7lou/naiveproxy-docker bash /data/entry.sh
 }
 
-echo "Congratulations! Created container Successfully:"
+echo ""
+echo "Congratulations! Create container Successfully:"
 docker ps --filter "name=naiveproxy"
 echo ""
 echo ""
 echo "You can run 'docker logs -f naiveproxy' to check the server logs, and press Ctrl+c to stop monitoring"
 echo "And then you can connect the proxy using you client~~"
-
-echo "finish"
+echo ""
