@@ -369,6 +369,8 @@ echo ""
 
 echo "Successfully created container"
 docker ps --filter "name=naiveproxy"
+echo ""
+echo ""
 
 # docker logs -f naiveproxy | sed '/certificate obtained successfully/Q'
 # docker logs -f naiveproxy | sed '/certificate obtained successfully/Q;echo "success"'
