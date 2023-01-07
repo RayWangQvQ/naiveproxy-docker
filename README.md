@@ -8,6 +8,7 @@
 - [2. 预备工作](#2-预备工作)
 - [3. 部署服务端](#3-部署服务端)
 - [4. 客户端](#4-客户端)
+- [5. 自定义配置](#5-自定义配置)
 
 <!-- /TOC -->
 
@@ -79,3 +80,17 @@ mkdir -p ./naive && cd ./naive && curl -sSL -f -o ./install.sh https://raw.githu
 | MacOS | Nekoray|
 | Android | SagerNet |
 | iOS | Shadowrocket |
+
+## 5. 自定义配置
+
+Caddy的配置文件`Caddyfile`已被挂载到宿主机的[./data/Caddyfile](data/Caddyfile)，想要自定义配置，比如添加多用户、修改proxy的用户名和密码、更改端口、修改伪装站点的host等等，都可以直接在宿主机修改该文件：
+
+```
+vim ./data/Caddyfile
+```
+
+修改完成并保存成功后，让Caddy热加载配置就可以了：
+
+```
+docker exec -it naiveproxy /app/caddy reload --config /data/Caddyfile
+```
