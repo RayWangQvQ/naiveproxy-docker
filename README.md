@@ -51,13 +51,13 @@ mkdir -p ./naive && cd ./naive && curl -sSL -f -o ./install.sh https://raw.githu
 
 参数说明：
 
-- `-t`，host，你的域名，如`demo.test.tk`
-- `-m`，mail，你的邮箱，用于自动颁发证书，如`zhangsan@qq.com`
-- `-u`，user，proxy的用户名
-- `-p`，pwd，proxy的密码
-- `-f`，fakeHost，伪装域名，默认`https://demo.cloudreve.org`
+- `-t`：host，你的域名，如`demo.test.tk`
+- `-m`：mail，你的邮箱，用于自动颁发证书，如`zhangsan@qq.com`
+- `-u`：user，proxy的用户名
+- `-p`：pwd，proxy的密码
+- `-f`：fakeHost，伪装域名，默认`https://demo.cloudreve.org`
 - `--verbose`，输出详细日志
-- `-h`，help，查看参数信息
+- `-h`：help，查看参数信息
 
 
 运行到最后，颁发证书时会先ERROR飘红，别慌，等一会。如果最后出现`certificate obtained successfully`字样，就是成功了，可以Ctrl+C退出日志追踪去部署客户端了。
