@@ -10,4 +10,5 @@ services:
     tty: true
     volumes:
       - ./data:/data
+      - ./share:/root/.local/share
     command: ["/bin/bash", "/data/entry.sh"]
