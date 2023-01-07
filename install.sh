@@ -114,6 +114,10 @@ while [ $# -ne 0 ]; do
         echo "      -Pwd"
         echo "          Possible values:"
         echo "          - 1qaz@wsx"
+        echo "  -f,--fake-host <FAKEHOST>         Your fake host, Defaults to \`$fakeHost\`."
+        echo "      -FakeHost"
+        echo "          Possible values:"
+        echo "          - https://demo.cloudreve.org"
         echo "  -?,--?,-h,--help,-Help             Shows this help message"
         echo ""
         exit 0
@@ -125,6 +129,8 @@ while [ $# -ne 0 ]; do
     esac
     shift
 done
+
+echo ""
 
 if [ -z "$host" ]; then
     read -p "input your host(such as demo.test.tk):" host
@@ -151,7 +157,7 @@ else
 fi
 
 echo "fakeHost: $fakeHost"
-
+echo ""
 # args:
 # remote_path - $1
 get_http_header_curl() {
@@ -347,19 +353,43 @@ replaceCaddyfileConfigs() {
 }
 
 downloadDockerComposeFile
+echo ""
 downloadDataFiles
+echo ""
 replaceCaddyfileConfigs
+echo ""
 
-docker compose version
-if [ $? -eq 0 ]; then
-    docker compose up -d
-else
-    docker-compose version
-    if [ $? -eq 0 ]; then
-        docker-compose up -d
-    else
-        docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data zai7lou/naiveproxy-docker bash /data/entry.sh
+{
+    docker compose version && docker compose up -d
+} || {
+    docker-compose version && docker-compose up -d
+} || {
+    docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data -v $PWD/share:/root/.local/share zai7lou/naiveproxy-docker bash /data/entry.sh
+}
+
+echo "Successfully created container"
+docker ps --filter "name=naiveproxy"
+
+# docker logs -f naiveproxy | sed '/certificate obtained successfully/Q'
+# docker logs -f naiveproxy | sed '/certificate obtained successfully/Q;echo "success"'
+
+# docker logs -f naiveproxy | while read line; do
+#     echo $line
+#     if echo "$line" | grep -q "certificate obtained successfully"; then
+#         exit 1
+#     fi
+# done
+
+docker logs -f naiveproxy | while read line; do
+    echo $line
+    if echo "$line" | grep -q "certificate obtained successfully"; then
+        echo ""
+        echo "Congratulations! Deploy Successfully."
+        echo "Next I'll try to turn off the log tracing process, or you can Ctrl+C to close it manually."
+        echo "Then you can connect the proxy using you client~~"
+        echo ""
+        ps -ef | grep "logs -f naiveproxy" | grep -v "grep" | awk '{print $2}' | xargs kill -9
     fi
-fi
+done
 
-docker logs -f naiveproxy
+echo "finish"

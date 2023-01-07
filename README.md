@@ -65,7 +65,9 @@ curl -sSL -f -o ./install.sh https://raw.githubusercontent.com/RayWangQvQ/naivep
 - `-h`：help，查看参数信息
 
 
-运行到最后，颁发证书时会先ERROR飘红，别慌，等一会。如果最后出现`certificate obtained successfully`字样，就是成功了，可以Ctrl+C退出日志追踪去部署客户端了。
+运行到最后，颁发证书时会先ERROR飘红，别慌，等一会。
+
+如果最后日志出现`certificate obtained successfully`字样，就是成功了，可以去部署客户端了。
 
 ![success](docs/imgs/cert-suc.png)
 
