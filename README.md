@@ -83,7 +83,14 @@ mkdir -p ./naive && cd ./naive && curl -sSL -f -o ./install.sh https://raw.githu
 
 ## 5. 自定义配置
 
-Caddy的配置文件`Caddyfile`已被挂载到宿主机的[./data/Caddyfile](data/Caddyfile)，想要自定义配置，比如添加多用户、修改proxy的用户名和密码、更改端口、修改伪装站点的host等等，都可以直接在宿主机修改该文件：
+Caddy的配置文件`Caddyfile`已被挂载到宿主机的[./data/Caddyfile](data/Caddyfile)，想要自定义配置，比如：
+
+- 添加proxy多用户
+- 修改proxy的用户名和密码
+- 更改端口
+- 修改伪装站点的host
+
+等等，都可以直接在宿主机修改该文件：
 
 ```
 vim ./data/Caddyfile
