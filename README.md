@@ -22,6 +22,7 @@ DockerHub: [DockerHub](https://hub.docker.com/repository/docker/zai7lou/naivepro
 
 - 一个域名
 - 域名已DNS到当前服务器ip
+- 服务器安装好docker环境
 
 不需要自己生成https证书，caddy会自动生成。
 
