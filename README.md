@@ -74,12 +74,13 @@ mkdir -p ./naive && cd ./naive && curl -sSL -f -o ./install.sh https://raw.githu
 
 很多教程，就不说了。
 
-| 平台  | 客户端 |
-|:----: | :----: |
-|  Win  | V2RayN/Nekoray |
-| MacOS | Nekoray|
+|  平台   | 客户端  |
+| :----:  | :----: |
+|  Win    | V2RayN/Nekoray |
+| Linux   | Nekoray |
+| MacOS   | Nekoray |
 | Android | SagerNet |
-| iOS | Shadowrocket |
+| iOS     | Shadowrocket |
 
 ## 5. 自定义配置
 
