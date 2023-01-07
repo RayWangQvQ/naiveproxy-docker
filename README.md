@@ -17,15 +17,16 @@
 镜像使用官方代码生成，利用`GitHub Actions`构建并上传到`DockerHub`。
 
 Dockerfile：[Dockerfile](Dockerfile)
+
 DockerHub: [DockerHub](https://hub.docker.com/repository/docker/zai7lou/naiveproxy-docker/general)
 
 ## 2. 预备工作
 
 - 一个域名
 - 域名已DNS到当前服务器ip
-- 服务器安装好docker环境
+- 服务器已安装好docker环境
 
-不需要自己生成https证书，caddy会自动生成。
+P.S.不需要自己生成https证书，caddy会自动生成。
 
 ## 3. 部署服务端
 
