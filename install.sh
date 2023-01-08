@@ -380,6 +380,7 @@ echo ""
 replaceCaddyfileConfigs
 echo ""
 
+echo ""
 echo "Try to run docker container:"
 {
     docker compose version && docker compose up -d

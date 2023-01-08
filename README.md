@@ -33,9 +33,11 @@ P.S.不需要自己生成https证书，caddy会自动生成。
 一键安装脚本：
 
 ```
+# create a dir
 mkdir -p ./naive && cd ./naive
 
-curl -sSL -f -o ./install.sh https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/install.sh && chmod +x ./install.sh && ./install.sh
+# install
+bash <(curl -sSL https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/install.sh)
 ```
 
 当不指定参数时，该脚本是互动式的，运行后会提示输入相关配置信息，输入后回车即可。
@@ -47,8 +49,10 @@ curl -sSL -f -o ./install.sh https://raw.githubusercontent.com/RayWangQvQ/naivep
 当然，你也可以像下面那样，直接将参数拼接好后立即执行：
 
 ```
+# create a dir
 mkdir -p ./naive && cd ./naive 
 
+# install
 curl -sSL -f -o ./install.sh https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/install.sh && chmod +x ./install.sh && ./install.sh -t demo.test.tk -m zhangsan@qq.com -u zhangsan -p 1qaz@wsx --verbose
 ```
 
