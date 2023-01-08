@@ -3,11 +3,19 @@ set -e
 set -u
 set -o pipefail
 
+echo '  ____               _   _       _   _            '
+echo ' |  _ \ __ _ _   _  | \ | | __ _(_)_(_)_   _____  '
+echo ' | |_) / _` | | | | |  \| |/ _` | | | \ \ / / _ \ '
+echo ' |  _ < (_| | |_| | | |\  | (_| | | |  \ V /  __/ '
+echo ' |_| \_\__,_|\__, | |_| \_|\__,_| |_|   \_/ \___| '
+echo '             |___/                                '
+
 host=""
 mail=""
 user=""
 pwd=""
-fakeHost="https://demo.cloudreve.org"
+fakeHostDefault="https://demo.cloudreve.org"
+fakeHost=""
 verbose=false
 
 invocation='say_verbose "Calling: ${yellow:-}${FUNCNAME[0]} ${green:-}$*${normal:-}"'
@@ -63,6 +71,7 @@ else
     exit 1
 fi
 
+# read params from init cmd
 while [ $# -ne 0 ]; do
     name="$1"
     case "$name" in
@@ -156,8 +165,18 @@ else
     echo "pwd: $pwd"
 fi
 
-echo "fakeHost: $fakeHost"
+if [ -z "$fakeHost" ]; then
+    read -p "input your camouflage website(default is $fakeHostDefault):" fakeHost
+    if [ -z "$fakeHost" ]; then
+        fakeHost=$fakeHostDefault
+    fi
+else
+    echo "camouflage website: $fakeHost"
+fi
+
 echo ""
+echo ""
+
 # args:
 # remote_path - $1
 get_http_header_curl() {
@@ -315,6 +334,7 @@ downloadDockerComposeFile() {
     eval $invocation
     rm -rf ./docker-compose.yml
     download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/docker-compose.yml docker-compose.yml
+    echo "Docker compose file:"
     cat ./docker-compose.yml
 }
 
@@ -349,6 +369,7 @@ replaceCaddyfileConfigs() {
     # replace fakeHost
     sed -i 's|<fakeHost>|'"$fakeHost"'|g' ./data/Caddyfile
 
+    echo "Caddyfile:"
     cat ./data/Caddyfile
 }
 
@@ -359,6 +380,7 @@ echo ""
 replaceCaddyfileConfigs
 echo ""
 
+echo "Try to run docker container:"
 {
     docker compose version && docker compose up -d
 } || {
@@ -367,11 +389,20 @@ echo ""
     docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data -v $PWD/share:/root/.local/share zai7lou/naiveproxy-docker bash /data/entry.sh
 }
 
-echo ""
-echo "Congratulations! Create container Successfully:"
 docker ps --filter "name=naiveproxy"
-echo ""
-echo ""
-echo "You can run 'docker logs -f naiveproxy' to check the server logs, and press Ctrl+c to stop monitoring"
-echo "And then you can connect the proxy using you client~~"
-echo ""
+
+containerId=$(docker ps -q --filter "name=^naiveproxy$")
+if [ -n "$containerId" ]; then
+    echo ""
+    echo "==============================================="
+    echo "Congratulations! Create container Successfully."
+    echo ""
+    echo "You can run 'docker logs -f naiveproxy' to check the server logs, and press Ctrl+c to stop monitoring"
+    echo "And then you can connect the proxy by your client~~"
+    echo "==============================================="
+else
+    echo ""
+    echo "Please monitoring logs to check whether naiveproxy server is running normally:"
+    echo ""
+    docker logs -f naiveproxy
+fi
