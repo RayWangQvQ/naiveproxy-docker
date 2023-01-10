@@ -3,25 +3,10 @@ set -e
 set -u
 set -o pipefail
 
-echo '  ____               _   _       _   _            '
-echo ' |  _ \ __ _ _   _  | \ | | __ _(_)_(_)_   _____  '
-echo ' | |_) / _` | | | | |  \| |/ _` | | | \ \ / / _ \ '
-echo ' |  _ < (_| | |_| | | |\  | (_| | | |  \ V /  __/ '
-echo ' |_| \_\__,_|\__, | |_| \_|\__,_| |_|   \_/ \___| '
-echo '             |___/                                '
-
-host=""
-mail=""
-user=""
-pwd=""
-fakeHostDefault="https://demo.cloudreve.org"
-fakeHost=""
-verbose=false
-
-invocation='say_verbose "Calling: ${yellow:-}${FUNCNAME[0]} ${green:-}$*${normal:-}"'
+# ------------share--------------
+invocation='echo "" && say_verbose "Calling: ${yellow:-}${FUNCNAME[0]} ${green:-}$*${normal:-}"'
 exec 3>&1
 if [ -t 1 ] && command -v tput >/dev/null; then
-    # see if it supports colors
     ncolors=$(tput colors || echo 0)
     if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
         bold="$(tput bold || echo)"
@@ -64,123 +49,22 @@ machine_has() {
     return $?
 }
 
-if machine_has "docker"; then
-    docker --version
-else
-    say_err "Missing dependency: docker was not found."
-    exit 1
-fi
+check_docker() {
+    eval $invocation
 
-# read params from init cmd
-while [ $# -ne 0 ]; do
-    name="$1"
-    case "$name" in
-    -t | --host | -[Hh]ost)
-        shift
-        host="$1"
-        ;;
-    -m | --mail | -[Mm]ail)
-        shift
-        mail="$1"
-        ;;
-    -u | --user | -[Uu]ser)
-        shift
-        user="$1"
-        ;;
-    -p | --pwd | -[Pp]wd)
-        shift
-        pwd="$1"
-        ;;
-    -f | --fake-host | -[Ff]ake[Hh]ost)
-        shift
-        fakeHost="$1"
-        ;;
-    --verbose | -[Vv]erbose)
-        verbose=true
-        ;;
-    -? | --? | -h | --help | -[Hh]elp)
-        script_name="$(basename "$0")"
-        echo "Ray Naiveproxy in Docker"
-        echo "Usage: $script_name [-t|--host <HOST>] [-m|--mail <MAIL>]"
-        echo "       $script_name -h|-?|--help"
-        echo ""
-        echo "$script_name is a simple command line interface to install naiveproxy in docker."
-        echo ""
-        echo "Options:"
-        echo "  -t,--host <HOST>         Your host, Defaults to \`$host\`."
-        echo "      -Host"
-        echo "          Possible values:"
-        echo "          - xui.test.com"
-        echo "  -m,--mail <MAIL>         Your mail, Defaults to \`$mail\`."
-        echo "      -Mail"
-        echo "          Possible values:"
-        echo "          - mail@qq.com"
-        echo "  -u,--user <USER>         Your proxy user name, Defaults to \`$user\`."
-        echo "      -User"
-        echo "          Possible values:"
-        echo "          - user"
-        echo "  -p,--pwd <PWD>         Your proxy password, Defaults to \`$pwd\`."
-        echo "      -Pwd"
-        echo "          Possible values:"
-        echo "          - 1qaz@wsx"
-        echo "  -f,--fake-host <FAKEHOST>         Your fake host, Defaults to \`$fakeHost\`."
-        echo "      -FakeHost"
-        echo "          Possible values:"
-        echo "          - https://demo.cloudreve.org"
-        echo "  -?,--?,-h,--help,-Help             Shows this help message"
-        echo ""
-        exit 0
-        ;;
-    *)
-        say_err "Unknown argument \`$name\`"
+    if machine_has "docker"; then
+        docker --version
+    else
+        say_err "Missing dependency: docker was not found, please install it first."
         exit 1
-        ;;
-    esac
-    shift
-done
-
-echo ""
-
-if [ -z "$host" ]; then
-    read -p "input your host(such as demo.test.tk):" host
-else
-    echo "host: $host"
-fi
-
-if [ -z "$mail" ]; then
-    read -p "input your mail(such as test@qq.com):" mail
-else
-    echo "mail: $mail"
-fi
-
-if [ -z "$user" ]; then
-    read -p "input your proxy user name(such as zhangsan):" user
-else
-    echo "user: $user"
-fi
-
-if [ -z "$pwd" ]; then
-    read -p "input your proxy password(such as 1qaz@wsx):" pwd
-else
-    echo "pwd: $pwd"
-fi
-
-if [ -z "$fakeHost" ]; then
-    read -p "input your camouflage website(default is $fakeHostDefault):" fakeHost
-    if [ -z "$fakeHost" ]; then
-        fakeHost=$fakeHostDefault
     fi
-else
-    echo "camouflage website: $fakeHost"
-fi
-
-echo ""
-echo ""
+}
 
 # args:
 # remote_path - $1
 get_http_header_curl() {
     eval $invocation
+
     local remote_path="$1"
 
     curl_options="-I -sSL --retry 5 --retry-delay 2 --connect-timeout 15 "
@@ -192,6 +76,7 @@ get_http_header_curl() {
 # remote_path - $1
 get_http_header_wget() {
     eval $invocation
+
     local remote_path="$1"
     local wget_options="-q -S --spider --tries 5 "
     # Store options that aren't supported on all wget implementations separately.
@@ -213,6 +98,7 @@ get_http_header_wget() {
 # Updates global variables $http_code and $download_error_msg
 downloadcurl() {
     eval $invocation
+
     unset http_code
     unset download_error_msg
     local remote_path="$1"
@@ -241,6 +127,7 @@ downloadcurl() {
 # Updates global variables $http_code and $download_error_msg
 downloadwget() {
     eval $invocation
+
     unset http_code
     unset download_error_msg
     local remote_path="$1"
@@ -328,18 +215,159 @@ download() {
     fi
     return 0
 }
+# ---------------------------------
+
+echo '  ____               _   _       _   _            '
+echo ' |  _ \ __ _ _   _  | \ | | __ _(_)_(_)_   _____  '
+echo ' | |_) / _` | | | | |  \| |/ _` | | | \ \ / / _ \ '
+echo ' |  _ < (_| | |_| | | |\  | (_| | | |  \ V /  __/ '
+echo ' |_| \_\__,_|\__, | |_| \_|\__,_| |_|   \_/ \___| '
+echo '             |___/                                '
+
+# ------------vars-----------
+host=""
+mail=""
+httpPort=""
+httpsPort=""
+user=""
+pwd=""
+fakeHostDefault="https://demo.cloudreve.org"
+fakeHost=""
+verbose=false
+# --------------------------
+
+# read params from init cmd
+read_var_from_init_cmd() {
+    eval $invocation
+
+    while [ $# -ne 0 ]; do
+        name="$1"
+        case "$name" in
+        -t | --host | -[Hh]ost)
+            shift
+            host="$1"
+            ;;
+        -m | --mail | -[Mm]ail)
+            shift
+            mail="$1"
+            ;;
+        -u | --user | -[Uu]ser)
+            shift
+            user="$1"
+            ;;
+        -p | --pwd | -[Pp]wd)
+            shift
+            pwd="$1"
+            ;;
+        -f | --fake-host | -[Ff]ake[Hh]ost)
+            shift
+            fakeHost="$1"
+            ;;
+        --verbose | -[Vv]erbose)
+            verbose=true
+            ;;
+        -? | --? | -h | --help | -[Hh]elp)
+            script_name="$(basename "$0")"
+            echo "Ray Naiveproxy in Docker"
+            echo "Usage: $script_name [-t|--host <HOST>] [-m|--mail <MAIL>]"
+            echo "       $script_name -h|-?|--help"
+            echo ""
+            echo "$script_name is a simple command line interface to install naiveproxy in docker."
+            echo ""
+            echo "Options:"
+            echo "  -t,--host <HOST>         Your host, Defaults to \`$host\`."
+            echo "      -Host"
+            echo "          Possible values:"
+            echo "          - xui.test.com"
+            echo "  -m,--mail <MAIL>         Your mail, Defaults to \`$mail\`."
+            echo "      -Mail"
+            echo "          Possible values:"
+            echo "          - mail@qq.com"
+            echo "  -u,--user <USER>         Your proxy user name, Defaults to \`$user\`."
+            echo "      -User"
+            echo "          Possible values:"
+            echo "          - user"
+            echo "  -p,--pwd <PWD>         Your proxy password, Defaults to \`$pwd\`."
+            echo "      -Pwd"
+            echo "          Possible values:"
+            echo "          - 1qaz@wsx"
+            echo "  -f,--fake-host <FAKEHOST>         Your fake host, Defaults to \`$fakeHost\`."
+            echo "      -FakeHost"
+            echo "          Possible values:"
+            echo "          - https://demo.cloudreve.org"
+            echo "  -?,--?,-h,--help,-Help             Shows this help message"
+            echo ""
+            exit 0
+            ;;
+        *)
+            say_err "Unknown argument \`$name\`"
+            exit 1
+            ;;
+        esac
+        shift
+    done
+}
+
+read_var_from_user() {
+    eval $invocation
+
+    if [ -z "$host" ]; then
+        read -p "input your host(such as demo.test.tk):" host
+    else
+        echo "host: $host"
+    fi
+
+    if [ -z "$mail" ]; then
+        read -p "input your mail(such as test@qq.com):" mail
+    else
+        echo "mail: $mail"
+    fi
+
+    if [ -z "$user" ]; then
+        read -p "input your proxy user name(such as zhangsan):" user
+    else
+        echo "user: $user"
+    fi
+
+    if [ -z "$pwd" ]; then
+        read -p "input your proxy password(such as 1qaz@wsx):" pwd
+    else
+        echo "pwd: $pwd"
+    fi
+
+    if [ -z "$fakeHost" ]; then
+        read -p "input your camouflage website(default is $fakeHostDefault):" fakeHost
+        if [ -z "$fakeHost" ]; then
+            fakeHost=$fakeHostDefault
+        fi
+    else
+        echo "camouflage website: $fakeHost"
+    fi
+}
 
 # 下载docker-compose文件
-downloadDockerComposeFile() {
+download_docker_compose_file() {
     eval $invocation
+
     rm -rf ./docker-compose.yml
     download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/docker-compose.yml docker-compose.yml
     echo "Docker compose file:"
     cat ./docker-compose.yml
 }
 
-downloadDataFiles() {
+replace_docker_compose_configs() {
     eval $invocation
+
+    # replace httpPort
+    sed -i 's|<httpPort>|'"$httpPort"'|g' ./docker-compose.yml
+
+    # replace httpsPort
+    sed -i 's|<httpsPort>|'"$httpsPort"'|g' ./docker-compose.yml
+}
+
+download_data_files() {
+    eval $invocation
+
     mkdir -p ./data
 
     # entry
@@ -351,7 +379,7 @@ downloadDataFiles() {
     download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/data/Caddyfile ./data/Caddyfile
 }
 
-replaceCaddyfileConfigs() {
+replace_caddyfile_configs() {
     eval $invocation
 
     # replace host
@@ -359,6 +387,12 @@ replaceCaddyfileConfigs() {
 
     # replace mail
     sed -i 's|<mail>|'"$mail"'|g' ./data/Caddyfile
+
+    # replace httpPort
+    sed -i 's|<httpPort>|'"$httpPort"'|g' ./docker-compose.yml
+
+    # replace httpsPort
+    sed -i 's|<httpsPort>|'"$httpsPort"'|g' ./docker-compose.yml
 
     # replace user
     sed -i 's|<user>|'"$user"'|g' ./data/Caddyfile
@@ -373,37 +407,49 @@ replaceCaddyfileConfigs() {
     cat ./data/Caddyfile
 }
 
-downloadDockerComposeFile
-echo ""
-downloadDataFiles
-echo ""
-replaceCaddyfileConfigs
-echo ""
+check_result() {
+    eval $invocation
 
-echo ""
-echo "Try to run docker container:"
-{
-    docker compose version && docker compose up -d
-} || {
-    docker-compose version && docker-compose up -d
-} || {
-    docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data -v $PWD/share:/root/.local/share zai7lou/naiveproxy-docker bash /data/entry.sh
+    echo "Try to run docker container:"
+    {
+        docker compose version && docker compose up -d
+    } || {
+        docker-compose version && docker-compose up -d
+    } || {
+        docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data -v $PWD/share:/root/.local/share zai7lou/naiveproxy-docker bash /data/entry.sh
+    }
+
+    docker ps --filter "name=naiveproxy"
+
+    containerId=$(docker ps -q --filter "name=^naiveproxy$")
+    if [ -n "$containerId" ]; then
+        echo ""
+        echo "==============================================="
+        echo "Congratulations! Create container Successfully."
+        echo ""
+        echo "You can run 'docker logs -f naiveproxy' to check the server logs, and press Ctrl+c to stop monitoring"
+        echo "And then you can connect the proxy by your client~~"
+        echo "==============================================="
+    else
+        echo ""
+        echo "Please monitoring logs to check whether naiveproxy server is running normally:"
+        echo ""
+        docker logs -f naiveproxy
+    fi
 }
 
-docker ps --filter "name=naiveproxy"
+main() {
+    check_docker
+    read_var_from_init_cmd
+    read_var_from_user
 
-containerId=$(docker ps -q --filter "name=^naiveproxy$")
-if [ -n "$containerId" ]; then
-    echo ""
-    echo "==============================================="
-    echo "Congratulations! Create container Successfully."
-    echo ""
-    echo "You can run 'docker logs -f naiveproxy' to check the server logs, and press Ctrl+c to stop monitoring"
-    echo "And then you can connect the proxy by your client~~"
-    echo "==============================================="
-else
-    echo ""
-    echo "Please monitoring logs to check whether naiveproxy server is running normally:"
-    echo ""
-    docker logs -f naiveproxy
-fi
+    download_docker_compose_file
+    replace_docker_compose_configs
+
+    download_data_files
+    replace_caddyfile_configs
+
+    check_result
+}
+
+main

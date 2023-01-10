@@ -4,10 +4,11 @@ services:
   naive:
     image: zai7lou/naiveproxy-docker
     container_name: naiveproxy
-    ports:
-      - 80:80
-      - 443:443
     tty: true
+    restart: unless-stopped
+    ports:
+      - <httpPort>:<httpPort>
+      - <httpsPort>:<httpsPort>
     volumes:
       - ./data:/data
       - ./share:/root/.local/share
