@@ -1,11 +1,13 @@
 {
+	<debug>
 	http_port <httpPort>
 	https_port <httpsPort>
-	email <mail>
+	emial <mail>
 }
-<host>:<httpsPort>{
+<host>:<httpsPort> {
+	tls <mail> <cert_file> <cert_key_file>
 	route {
-                # proxy
+		# proxy
 		forward_proxy {
 			basic_auth <user> <pwd>
 			hide_ip
@@ -13,7 +15,7 @@
 			probe_resistance
 		}
 
-                # 伪装网址
+		# 伪装网址
 		reverse_proxy <fakeHost> {
 			header_up Host {upstream_hostport}
 		}

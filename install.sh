@@ -23,17 +23,17 @@ if [ -t 1 ] && command -v tput >/dev/null; then
 fi
 
 say_warning() {
-    printf "%b\n" "${yellow:-}naiveproxy_docker_install: Warning: $1${normal:-}" >&3
+    printf "%b\n" "${yellow:-}ray_naive_install: Warning: $1${normal:-}" >&3
 }
 
 say_err() {
-    printf "%b\n" "${red:-}naiveproxy_docker_install: Error: $1${normal:-}" >&2
+    printf "%b\n" "${red:-}ray_naive_install: Error: $1${normal:-}" >&2
 }
 
 say() {
     # using stream 3 (defined in the beginning) to not interfere with stdout of functions
     # which may be used as return value
-    printf "%b\n" "${cyan:-}naiveproxy_docker_install:${normal:-} $1" >&3
+    printf "%b\n" "${cyan:-}ray_naive_install:${normal:-} $1" >&3
 }
 
 say_verbose() {
@@ -217,24 +217,32 @@ download() {
 }
 # ---------------------------------
 
-echo '  ____               _   _       _   _            '
-echo ' |  _ \ __ _ _   _  | \ | | __ _(_)_(_)_   _____  '
-echo ' | |_) / _` | | | | |  \| |/ _` | | | \ \ / / _ \ '
-echo ' |  _ < (_| | |_| | | |\  | (_| | | |  \ V /  __/ '
-echo ' |_| \_\__,_|\__, | |_| \_|\__,_| |_|   \_/ \___| '
-echo '             |___/                                '
+say_warning '  ____               _   _       _   _            '
+say_warning ' |  _ \ __ _ _   _  | \ | | __ _(_)_(_)_   _____  '
+say_warning ' | |_) / _` | | | | |  \| |/ _` | | | \ \ / / _ \ '
+say_warning ' |  _ < (_| | |_| | | |\  | (_| | | |  \ V /  __/ '
+say_warning ' |_| \_\__,_|\__, | |_| \_|\__,_| |_|   \_/ \___| '
+say_warning '             |___/                                '
 
 # ------------vars-----------、
 gitRowUrl="https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main"
 
 host=""
 mail=""
+
+certMode="1"
+certFile=""
+certKeyFile=""
+
 httpPort=""
 httpsPort=""
+
 user=""
 pwd=""
+
 fakeHostDefault="https://demo.cloudreve.org"
 fakeHost=""
+
 verbose=false
 # --------------------------
 
@@ -313,46 +321,76 @@ read_var_from_init_cmd() {
 read_var_from_user() {
     eval $invocation
 
+    # host
     if [ -z "$host" ]; then
         read -p "input your host(such as demo.test.tk):" host
     else
-        echo "host: $host"
+        say "host: $host"
     fi
 
+    # email
     if [ -z "$mail" ]; then
         read -p "input your mail(such as test@qq.com):" mail
     else
-        echo "mail: $mail"
+        say "mail: $mail"
     fi
 
+    # cert
+    if [ "$certMode" == "1" ]; then
+        say "certMode: $certMode（由Caddy自动颁发）"
+        say_warning "自动颁发证书需要开放80端口给Caddy使用，请确保80端口开放且未被占用"
+        httpPort="80"
+    else
+        # certMode=2，使用现有证书
+        say "certMode: 2"
+        if [ -z "$certKeyFile" ]; then
+            read -p "请输入证书key文件路径:" certKeyFile
+        else
+            say "certKeyFile: $certKeyFile"
+        fi
+
+        if [ -z "$certFile" ]; then
+            read -p "请输入证书文件路径:" certFile
+        else
+            say "certFile: $certFile"
+        fi
+    fi
+
+    # port
     if [ -z "$httpPort" ]; then
-        read -p "input your httpPort(such as 8080, default 80):" httpPort
-        if [ -z "$httpPort" ]; then
+        if [ $certMode == "2" ]; then
+            say "使用现有证书模式允许使用非80的http端口"
+            read -p "请输入Caddy的http端口(如8080, 默认80):" httpPort
+            if [ -z "$httpPort" ]; then
+                httpPort="80"
+            fi
+        else
             httpPort="80"
+            say "httpPort: $httpPort"
         fi
     else
-        echo "httpPort: $httpPort"
+        say "httpPort: $httpPort"
     fi
 
     if [ -z "$httpsPort" ]; then
-        read -p "input your httpsPort(such as 8043, default 443):" httpsPort
+        read -p "请输入https端口(如8043, 默认443):" httpsPort
         if [ -z "$httpsPort" ]; then
             httpsPort="443"
         fi
     else
-        echo "httpsPort: $httpsPort"
+        say "httpsPort: $httpsPort"
     fi
 
     if [ -z "$user" ]; then
         read -p "input your proxy user name(such as zhangsan):" user
     else
-        echo "user: $user"
+        say "user: $user"
     fi
 
     if [ -z "$pwd" ]; then
         read -p "input your proxy password(such as 1qaz@wsx):" pwd
     else
-        echo "pwd: $pwd"
+        say "pwd: $pwd"
     fi
 
     if [ -z "$fakeHost" ]; then
@@ -361,7 +399,7 @@ read_var_from_user() {
             fakeHost=$fakeHostDefault
         fi
     else
-        echo "camouflage website: $fakeHost"
+        say "camouflage website: $fakeHost"
     fi
 }
 
@@ -371,7 +409,6 @@ download_docker_compose_file() {
 
     rm -rf ./docker-compose.yml
     download $gitRowUrl/docker-compose.yml docker-compose.yml
-    echo "Docker compose file:"
 }
 
 replace_docker_compose_configs() {
@@ -383,6 +420,7 @@ replace_docker_compose_configs() {
     # replace httpsPort
     sed -i 's|<httpsPort>|'"$httpsPort"'|g' ./docker-compose.yml
 
+    say "Docker compose file:"
     cat ./docker-compose.yml
 }
 
@@ -403,11 +441,24 @@ download_data_files() {
 replace_caddyfile_configs() {
     eval $invocation
 
+    # debug
+    debug=""
+    if [ $verbose = true ];then
+        debug="debug"
+    fi
+    sed -i 's|<debug>|'"$debug"'|g' ./data/Caddyfile
+
     # replace host
     sed -i 's|<host>|'"$host"'|g' ./data/Caddyfile
 
     # replace mail
     sed -i 's|<mail>|'"$mail"'|g' ./data/Caddyfile
+
+    # cert_file
+    sed -i 's|<cert_file>|'"$certFile"'|g' ./data/Caddyfile
+
+    # cert_key_file
+    sed -i 's|<cert_key_file>|'"$certKeyFile"'|g' ./data/Caddyfile
 
     # replace httpPort
     sed -i 's|<httpPort>|'"$httpPort"'|g' ./data/Caddyfile
@@ -424,21 +475,31 @@ replace_caddyfile_configs() {
     # replace fakeHost
     sed -i 's|<fakeHost>|'"$fakeHost"'|g' ./data/Caddyfile
 
-    echo "Caddyfile:"
+    say "Caddyfile:"
     cat ./data/Caddyfile
 }
 
-check_result() {
+runContainer() {
     eval $invocation
 
-    echo "Try to run docker container:"
+    say "Try to run docker container:"
     {
         docker compose version && docker compose up -d
     } || {
         docker-compose version && docker-compose up -d
     } || {
-        docker run -itd --name naiveproxy -p 80:80 -p 443:443 -v $PWD/data:/data -v $PWD/share:/root/.local/share zai7lou/naiveproxy-docker bash /data/entry.sh
+        docker run -itd --name naiveproxy \
+            --restart=unless-stopped \
+            -p $httpPort:$httpPort \
+            -p $httpsPort:$httpsPort \
+            -v $PWD/data:/data \
+            -v $PWD/share:/root/.local/share \
+            zai7lou/naiveproxy-docker bash /data/entry.sh
     }
+}
+
+check_result() {
+    eval $invocation
 
     docker ps --filter "name=naiveproxy"
 
@@ -469,6 +530,8 @@ main() {
 
     download_data_files
     replace_caddyfile_configs
+
+    runContainer
 
     check_result
 }
