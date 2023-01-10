@@ -217,12 +217,12 @@ download() {
 }
 # ---------------------------------
 
-say_warning '  ____               _   _       _   _            '
-say_warning ' |  _ \ __ _ _   _  | \ | | __ _(_)_(_)_   _____  '
-say_warning ' | |_) / _` | | | | |  \| |/ _` | | | \ \ / / _ \ '
-say_warning ' |  _ < (_| | |_| | | |\  | (_| | | |  \ V /  __/ '
-say_warning ' |_| \_\__,_|\__, | |_| \_|\__,_| |_|   \_/ \___| '
-say_warning '             |___/                                '
+echo '  ____               _   _       _   _            '
+echo ' |  _ \ __ _ _   _  | \ | | __ _(_)_(_)_   _____  '
+echo ' | |_) / _` | | | | |  \| |/ _` | | | \ \ / / _ \ '
+echo ' |  _ < (_| | |_| | | |\  | (_| | | |  \ V /  __/ '
+echo ' |_| \_\__,_|\__, | |_| \_|\__,_| |_|   \_/ \___| '
+echo '             |___/                                '
 
 # ------------vars-----------、
 gitRowUrl="https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main"
@@ -230,7 +230,7 @@ gitRowUrl="https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main"
 host=""
 mail=""
 
-certMode="1"
+certMode=""
 certFile=""
 certKeyFile=""
 
@@ -247,76 +247,72 @@ verbose=false
 # --------------------------
 
 # read params from init cmd
-read_var_from_init_cmd() {
-    eval $invocation
-
-    while [ $# -ne 0 ]; do
-        name="$1"
-        case "$name" in
-        -t | --host | -[Hh]ost)
-            shift
-            host="$1"
-            ;;
-        -m | --mail | -[Mm]ail)
-            shift
-            mail="$1"
-            ;;
-        -u | --user | -[Uu]ser)
-            shift
-            user="$1"
-            ;;
-        -p | --pwd | -[Pp]wd)
-            shift
-            pwd="$1"
-            ;;
-        -f | --fake-host | -[Ff]ake[Hh]ost)
-            shift
-            fakeHost="$1"
-            ;;
-        --verbose | -[Vv]erbose)
-            verbose=true
-            ;;
-        -? | --? | -h | --help | -[Hh]elp)
-            script_name="$(basename "$0")"
-            echo "Ray Naiveproxy in Docker"
-            echo "Usage: $script_name [-t|--host <HOST>] [-m|--mail <MAIL>]"
-            echo "       $script_name -h|-?|--help"
-            echo ""
-            echo "$script_name is a simple command line interface to install naiveproxy in docker."
-            echo ""
-            echo "Options:"
-            echo "  -t,--host <HOST>         Your host, Defaults to \`$host\`."
-            echo "      -Host"
-            echo "          Possible values:"
-            echo "          - xui.test.com"
-            echo "  -m,--mail <MAIL>         Your mail, Defaults to \`$mail\`."
-            echo "      -Mail"
-            echo "          Possible values:"
-            echo "          - mail@qq.com"
-            echo "  -u,--user <USER>         Your proxy user name, Defaults to \`$user\`."
-            echo "      -User"
-            echo "          Possible values:"
-            echo "          - user"
-            echo "  -p,--pwd <PWD>         Your proxy password, Defaults to \`$pwd\`."
-            echo "      -Pwd"
-            echo "          Possible values:"
-            echo "          - 1qaz@wsx"
-            echo "  -f,--fake-host <FAKEHOST>         Your fake host, Defaults to \`$fakeHost\`."
-            echo "      -FakeHost"
-            echo "          Possible values:"
-            echo "          - https://demo.cloudreve.org"
-            echo "  -?,--?,-h,--help,-Help             Shows this help message"
-            echo ""
-            exit 0
-            ;;
-        *)
-            say_err "Unknown argument \`$name\`"
-            exit 1
-            ;;
-        esac
+while [ $# -ne 0 ]; do
+    name="$1"
+    case "$name" in
+    -t | --host | -[Hh]ost)
         shift
-    done
-}
+        host="$1"
+        ;;
+    -m | --mail | -[Mm]ail)
+        shift
+        mail="$1"
+        ;;
+    -u | --user | -[Uu]ser)
+        shift
+        user="$1"
+        ;;
+    -p | --pwd | -[Pp]wd)
+        shift
+        pwd="$1"
+        ;;
+    -f | --fake-host | -[Ff]ake[Hh]ost)
+        shift
+        fakeHost="$1"
+        ;;
+    --verbose | -[Vv]erbose)
+        verbose=true
+        ;;
+    -? | --? | -h | --help | -[Hh]elp)
+        script_name="$(basename "$0")"
+        echo "Ray Naiveproxy in Docker"
+        echo "Usage: $script_name [-t|--host <HOST>] [-m|--mail <MAIL>]"
+        echo "       $script_name -h|-?|--help"
+        echo ""
+        echo "$script_name is a simple command line interface to install naiveproxy in docker."
+        echo ""
+        echo "Options:"
+        echo "  -t,--host <HOST>         Your host, Defaults to \`$host\`."
+        echo "      -Host"
+        echo "          Possible values:"
+        echo "          - xui.test.com"
+        echo "  -m,--mail <MAIL>         Your mail, Defaults to \`$mail\`."
+        echo "      -Mail"
+        echo "          Possible values:"
+        echo "          - mail@qq.com"
+        echo "  -u,--user <USER>         Your proxy user name, Defaults to \`$user\`."
+        echo "      -User"
+        echo "          Possible values:"
+        echo "          - user"
+        echo "  -p,--pwd <PWD>         Your proxy password, Defaults to \`$pwd\`."
+        echo "      -Pwd"
+        echo "          Possible values:"
+        echo "          - 1qaz@wsx"
+        echo "  -f,--fake-host <FAKEHOST>         Your fake host, Defaults to \`$fakeHost\`."
+        echo "      -FakeHost"
+        echo "          Possible values:"
+        echo "          - https://demo.cloudreve.org"
+        echo "  -?,--?,-h,--help,-Help             Shows this help message"
+        echo ""
+        exit 0
+        ;;
+    *)
+        say_err "Unknown argument \`$name\`"
+        exit 1
+        ;;
+    esac
+    shift
+done
 
 read_var_from_user() {
     eval $invocation
@@ -336,13 +332,20 @@ read_var_from_user() {
     fi
 
     # cert
+    if [ -z "$certMode" ]; then
+        read -p "请输入证书模式(1.Caddy自动颁发；2.使用现有证书。默认1):" certMode
+        if [ -z "$certMode" ]; then
+            certMode="1"
+        fi
+    fi
+
     if [ "$certMode" == "1" ]; then
-        say "certMode: $certMode（由Caddy自动颁发）"
+        # say "certMode: $certMode（由Caddy自动颁发）"
         say_warning "自动颁发证书需要开放80端口给Caddy使用，请确保80端口开放且未被占用"
         httpPort="80"
     else
         # certMode=2，使用现有证书
-        say "certMode: 2"
+        say "certMode: 2（使用现有证书）"
         if [ -z "$certKeyFile" ]; then
             read -p "请输入证书key文件路径:" certKeyFile
         else
@@ -443,7 +446,7 @@ replace_caddyfile_configs() {
 
     # debug
     debug=""
-    if [ $verbose = true ];then
+    if [ $verbose = true ]; then
         debug="debug"
     fi
     sed -i 's|<debug>|'"$debug"'|g' ./data/Caddyfile
@@ -522,7 +525,6 @@ check_result() {
 
 main() {
     check_docker
-    read_var_from_init_cmd
     read_var_from_user
 
     download_docker_compose_file
