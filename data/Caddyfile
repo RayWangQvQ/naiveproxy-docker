@@ -3,20 +3,22 @@
 	http_port <httpPort>
 	https_port <httpsPort>
 	email <mail>
+	order forward_proxy before file_server
 }
-:<httpsPort>, <host>
-tls <mail> <cert_file> <cert_key_file>
-route {
-	# proxy
-	forward_proxy {
-		basic_auth <user> <pwd>
-		hide_ip
-		hide_via
-		probe_resistance
-	}
+:<httpsPort>, <host> {
+	tls <mail> <cert_file> <cert_key_file>
+	route {
+		# proxy
+		forward_proxy {
+			basic_auth <user> <pwd>
+			hide_ip
+			hide_via
+			probe_resistance
+		}
 
-	# 伪装网址
-	reverse_proxy <fakeHost> {
-		header_up Host {upstream_hostport}
+		# 伪装网址
+		reverse_proxy <fakeHost> {
+			header_up Host {upstream_hostport}
+		}
 	}
 }
