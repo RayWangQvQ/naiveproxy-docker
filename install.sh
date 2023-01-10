@@ -325,6 +325,24 @@ read_var_from_user() {
         echo "mail: $mail"
     fi
 
+    if [ -z "$httpPort" ]; then
+        read -p "input your httpPort(such as 8080, default 80):" httpPort
+        if [ -z "$httpPort" ]; then
+            httpPort="80"
+        fi
+    else
+        echo "httpPort: $httpPort"
+    fi
+
+    if [ -z "$httpsPort" ]; then
+        read -p "input your httpsPort(such as 8043, default 443):" httpsPort
+        if [ -z "$httpsPort" ]; then
+            httpsPort="443"
+        fi
+    else
+        echo "httpsPort: $httpsPort"
+    fi
+
     if [ -z "$user" ]; then
         read -p "input your proxy user name(such as zhangsan):" user
     else
