@@ -372,7 +372,6 @@ download_docker_compose_file() {
     rm -rf ./docker-compose.yml
     download $gitRowUrl/docker-compose.yml docker-compose.yml
     echo "Docker compose file:"
-    cat ./docker-compose.yml
 }
 
 replace_docker_compose_configs() {
@@ -383,6 +382,8 @@ replace_docker_compose_configs() {
 
     # replace httpsPort
     sed -i 's|<httpsPort>|'"$httpsPort"'|g' ./docker-compose.yml
+
+    cat ./docker-compose.yml
 }
 
 download_data_files() {
@@ -409,10 +410,10 @@ replace_caddyfile_configs() {
     sed -i 's|<mail>|'"$mail"'|g' ./data/Caddyfile
 
     # replace httpPort
-    sed -i 's|<httpPort>|'"$httpPort"'|g' ./docker-compose.yml
+    sed -i 's|<httpPort>|'"$httpPort"'|g' ./data/Caddyfile
 
     # replace httpsPort
-    sed -i 's|<httpsPort>|'"$httpsPort"'|g' ./docker-compose.yml
+    sed -i 's|<httpsPort>|'"$httpsPort"'|g' ./data/Caddyfile
 
     # replace user
     sed -i 's|<user>|'"$user"'|g' ./data/Caddyfile

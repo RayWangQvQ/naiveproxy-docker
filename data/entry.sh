@@ -7,4 +7,4 @@ echo "Formate the Caddyfile"
 echo "Start server"
 /app/caddy start --config /data/Caddyfile
 
-tail -f /data/Caddyfile
+tail -f -n 50 /data/Caddyfile
