@@ -224,7 +224,9 @@ echo ' |  _ < (_| | |_| | | |\  | (_| | | |  \ V /  __/ '
 echo ' |_| \_\__,_|\__, | |_| \_|\__,_| |_|   \_/ \___| '
 echo '             |___/                                '
 
-# ------------vars-----------
+# ------------vars-----------、
+gitRowUrl="https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main"
+
 host=""
 mail=""
 httpPort=""
@@ -350,7 +352,7 @@ download_docker_compose_file() {
     eval $invocation
 
     rm -rf ./docker-compose.yml
-    download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/docker-compose.yml docker-compose.yml
+    download $gitRowUrl/docker-compose.yml docker-compose.yml
     echo "Docker compose file:"
     cat ./docker-compose.yml
 }
@@ -372,11 +374,11 @@ download_data_files() {
 
     # entry
     rm -rf ./data/entry.sh
-    download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/data/entry.sh ./data/entry.sh
+    download $gitRowUrl/data/entry.sh ./data/entry.sh
 
     # Caddyfile
     rm -rf ./data/Caddyfile
-    download https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main/data/Caddyfile ./data/Caddyfile
+    download $gitRowUrl/data/Caddyfile ./data/Caddyfile
 }
 
 replace_caddyfile_configs() {
