@@ -2,7 +2,7 @@
 	<debug>
 	http_port <httpPort>
 	https_port <httpsPort>
-	emial <mail>
+	email <mail>
 }
 <host>:<httpsPort> {
 	tls <mail> <cert_file> <cert_key_file>
