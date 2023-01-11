@@ -343,8 +343,7 @@ read_var_from_user() {
             say "mail: $mail"
         fi
     else
-        # certMode=2，使用现有证书
-        say "certMode: 2（使用现有证书）"
+        # say "certMode: 2（使用现有证书）"
         if [ -z "$certKeyFile" ]; then
             read -p "请输入证书key文件路径:" certKeyFile
         else
@@ -423,6 +422,12 @@ replace_docker_compose_configs() {
     # replace httpsPort
     sed -i 's|<httpsPort>|'"$httpsPort"'|g' ./docker-compose.yml
 
+    # certs
+    if [ "$certMode" == "2" ]; then
+        sed -i 's|<certVolumes>|'- "$certFile":"$certFile"'|g' ./docker-compose.yml
+        sed -i 's|<certKeyVolumes>|'- "$certKeyFile":"$certKeyFile"'|g' ./docker-compose.yml
+    fi
+
     say "Docker compose file:"
     cat ./docker-compose.yml
 }
@@ -494,12 +499,16 @@ runContainer() {
     } || {
         docker-compose version && docker-compose up -d
     } || {
+        certsV=""
+        if [ "$certMode" == "2"]; then
+            certsV="-v $certFile:certFile -v $certKeyFile:$certKeyFile"
+        fi
         docker run -itd --name naiveproxy \
             --restart=unless-stopped \
             -p $httpPort:$httpPort \
             -p $httpsPort:$httpsPort \
             -v $PWD/data:/data \
-            -v $PWD/share:/root/.local/share \
+            -v $PWD/share:/root/.local/share $certsV \
             zai7lou/naiveproxy-docker bash /data/entry.sh
     }
 }

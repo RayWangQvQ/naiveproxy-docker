@@ -12,4 +12,6 @@ services:
     volumes:
       - ./data:/data
       - ./share:/root/.local/share
+      <certVolumes>
+      <certKeyVolumes>
     command: ["/bin/bash", "/data/entry.sh"]
