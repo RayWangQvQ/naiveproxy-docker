@@ -447,6 +447,9 @@ replace_docker_compose_configs() {
     if [ "$certMode" == "2" ]; then
         sed -i 's|<certVolumes>|'-" $certFile":"$certFile"'|g' ./docker-compose.yml
         sed -i 's|<certKeyVolumes>|'-" $certKeyFile":"$certKeyFile"'|g' ./docker-compose.yml
+    else
+        sed -i 's|<certVolumes>| |g' ./docker-compose.yml
+        sed -i 's|<certKeyVolumes>| |g' ./docker-compose.yml
     fi
 
     say "Docker compose file:"
@@ -521,16 +524,16 @@ runContainer() {
         docker-compose version && docker-compose up -d
     } || {
         certsV=""
-        if [ "$certMode" == "2"]; then
+        if [ "$certMode" == "2" ]; then
             certsV="-v $certFile:certFile -v $certKeyFile:$certKeyFile"
         fi
         docker run -itd --name naiveproxy \
-            --restart=unless-stopped \
-            -p $httpPort:$httpPort \
-            -p $httpsPort:$httpsPort \
-            -v $PWD/data:/data \
-            -v $PWD/share:/root/.local/share $certsV \
-            zai7lou/naiveproxy-docker bash /data/entry.sh
+        --restart=unless-stopped \
+        -p $httpPort:$httpPort \
+        -p $httpsPort:$httpsPort \
+        -v $PWD/data:/data \
+        -v $PWD/share:/root/.local/share $certsV \
+        zai7lou/naiveproxy-docker bash /data/entry.sh
     }
 }
 
