@@ -319,9 +319,9 @@ read_var_from_user() {
 
     # host
     if [ -z "$host" ]; then
-        read -p "input your host(such as demo.test.tk):" host
+        read -p "请输入域名(如demo.test.tk):" host
     else
-        say "host: $host"
+        say "域名: $host"
     fi
 
     # cert
@@ -338,22 +338,22 @@ read_var_from_user() {
         httpPort="80"
         # email
         if [ -z "$mail" ]; then
-            read -p "input your mail(such as test@qq.com):" mail
+            read -p "请输入邮箱(如test@qq.com):" mail
         else
-            say "mail: $mail"
+            say "邮箱: $mail"
         fi
     else
         # say "certMode: 2（使用现有证书）"
         if [ -z "$certKeyFile" ]; then
             read -p "请输入证书key文件路径:" certKeyFile
         else
-            say "certKeyFile: $certKeyFile"
+            say "证书key: $certKeyFile"
         fi
 
         if [ -z "$certFile" ]; then
             read -p "请输入证书文件路径:" certFile
         else
-            say "certFile: $certFile"
+            say "证书文件: $certFile"
         fi
     fi
 
@@ -367,7 +367,7 @@ read_var_from_user() {
             fi
         else
             httpPort="80"
-            say "httpPort: $httpPort"
+            say "Http端口: $httpPort"
         fi
     else
         say "httpPort: $httpPort"
@@ -379,28 +379,28 @@ read_var_from_user() {
             httpsPort="443"
         fi
     else
-        say "httpsPort: $httpsPort"
+        say "Https端口: $httpsPort"
     fi
 
     if [ -z "$user" ]; then
-        read -p "input your proxy user name(such as zhangsan):" user
+        read -p "请输入节点用户名(如zhangsan):" user
     else
-        say "user: $user"
+        say "节点用户名: $user"
     fi
 
     if [ -z "$pwd" ]; then
-        read -p "input your proxy password(such as 1qaz@wsx):" pwd
+        read -p "请输入节点密码(如1qaz@wsx):" pwd
     else
-        say "pwd: $pwd"
+        say "节点密码: $pwd"
     fi
 
     if [ -z "$fakeHost" ]; then
-        read -p "input your camouflage website(default is $fakeHostDefault):" fakeHost
+        read -p "请输入伪装站点地址(如$fakeHostDefault):" fakeHost
         if [ -z "$fakeHost" ]; then
             fakeHost=$fakeHostDefault
         fi
     else
-        say "camouflage website: $fakeHost"
+        say "伪装站点地址: $fakeHost"
     fi
 }
 
@@ -523,14 +523,19 @@ check_result() {
     if [ -n "$containerId" ]; then
         echo ""
         echo "==============================================="
-        echo "Congratulations! Create container Successfully."
+        echo "Congratulations! 恭喜！"
+        echo "创建并运行naiveproxy容器成功。"
         echo ""
-        echo "You can run 'docker logs -f naiveproxy' to check the server logs, and press Ctrl+c to stop monitoring"
-        echo "And then you can connect the proxy by your client~~"
+        echo "请使用浏览器访问'https://$host:$httpsPort'，验证是否可正常访问伪装站点"
+        echo "如果异常，请运行'docker logs -f naiveproxy'来追踪容器运行日志, 随后可以点击 Ctrl+c 退出日志追踪"
+        echo ""
+        echo "然后你可以使用客户端连接你的节点了："
+        echo "naive+https://$user:$pwd@$host:$httpsPort#naive"
+        echo "Enjoy it~"
         echo "==============================================="
     else
         echo ""
-        echo "Please monitoring logs to check whether naiveproxy server is running normally:"
+        echo "请查看运行日志，确认容器是否正常运行，点击 Ctrl+c 退出日志追踪"
         echo ""
         docker logs -f naiveproxy
     fi
