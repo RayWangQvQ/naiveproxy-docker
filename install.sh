@@ -324,13 +324,6 @@ read_var_from_user() {
         say "host: $host"
     fi
 
-    # email
-    if [ -z "$mail" ]; then
-        read -p "input your mail(such as test@qq.com):" mail
-    else
-        say "mail: $mail"
-    fi
-
     # cert
     if [ -z "$certMode" ]; then
         read -p "请输入证书模式(1.Caddy自动颁发；2.使用现有证书。默认1):" certMode
@@ -343,6 +336,12 @@ read_var_from_user() {
         # say "certMode: $certMode（由Caddy自动颁发）"
         say_warning "自动颁发证书需要开放80端口给Caddy使用，请确保80端口开放且未被占用"
         httpPort="80"
+        # email
+        if [ -z "$mail" ]; then
+            read -p "input your mail(such as test@qq.com):" mail
+        else
+            say "mail: $mail"
+        fi
     else
         # certMode=2，使用现有证书
         say "certMode: 2（使用现有证书）"
@@ -414,6 +413,7 @@ download_docker_compose_file() {
     download $gitRowUrl/docker-compose.yml docker-compose.yml
 }
 
+# 配置docker-compose文件
 replace_docker_compose_configs() {
     eval $invocation
 
@@ -427,6 +427,7 @@ replace_docker_compose_configs() {
     cat ./docker-compose.yml
 }
 
+# 下载data
 download_data_files() {
     eval $invocation
 
@@ -441,6 +442,7 @@ download_data_files() {
     download $gitRowUrl/data/Caddyfile ./data/Caddyfile
 }
 
+# 配置Caddyfile
 replace_caddyfile_configs() {
     eval $invocation
 
@@ -482,6 +484,7 @@ replace_caddyfile_configs() {
     cat ./data/Caddyfile
 }
 
+# 运行容器
 runContainer() {
     eval $invocation
 
@@ -501,6 +504,7 @@ runContainer() {
     }
 }
 
+# 检查容器运行状态
 check_result() {
     eval $invocation
 

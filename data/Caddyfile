@@ -2,7 +2,6 @@
 	<debug>
 	http_port <httpPort>
 	https_port <httpsPort>
-	email <mail>
 	order forward_proxy before file_server
 }
 :<httpsPort>, <host> {
