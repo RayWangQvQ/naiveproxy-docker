@@ -228,11 +228,12 @@ echo '             |___/                                '
 gitRowUrl="https://raw.githubusercontent.com/RayWangQvQ/naiveproxy-docker/main"
 
 host=""
-mail=""
 
 certMode=""
 certFile=""
 certKeyFile=""
+
+mail=""
 
 httpPort=""
 httpsPort=""
@@ -254,13 +255,33 @@ while [ $# -ne 0 ]; do
         shift
         host="$1"
         ;;
+    -o | --cert-mode | -[Cc]ert[Mm]ode)
+        shift
+        certMode="$1"
+        ;;
+    -c | --cert-file | -[Cc]ert[Ff]ile)
+        shift
+        certFile="$1"
+        ;;
+    -k | --cert-key-file | -[Cc]ert[Kk]ey[Ff]ile)
+        shift
+        certKeyFile="$1"
+        ;;
     -m | --mail | -[Mm]ail)
         shift
         mail="$1"
         ;;
-    -u | --user | -[Uu]ser)
+    -w | --http-port | -[Hh]ttp[Pp]ort)
         shift
-        user="$1"
+        httpPort="$1"
+        ;;
+    -s | --http-port | -[Hh]ttp[Pp]ort)
+        shift
+        httpPort="$1"
+        ;;
+    -u | --https-port | -[Hh]ttps[Pp]ort)
+        shift
+        httpsPort="$1"
         ;;
     -p | --pwd | -[Pp]wd)
         shift
