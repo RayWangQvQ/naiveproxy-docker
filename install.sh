@@ -424,8 +424,8 @@ replace_docker_compose_configs() {
 
     # certs
     if [ "$certMode" == "2" ]; then
-        sed -i 's|<certVolumes>|'- "$certFile":"$certFile"'|g' ./docker-compose.yml
-        sed -i 's|<certKeyVolumes>|'- "$certKeyFile":"$certKeyFile"'|g' ./docker-compose.yml
+        sed -i 's|<certVolumes>|'-" $certFile":"$certFile"'|g' ./docker-compose.yml
+        sed -i 's|<certKeyVolumes>|'-" $certKeyFile":"$certKeyFile"'|g' ./docker-compose.yml
     fi
 
     say "Docker compose file:"
