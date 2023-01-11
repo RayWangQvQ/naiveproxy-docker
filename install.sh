@@ -277,11 +277,11 @@ while [ $# -ne 0 ]; do
         ;;
     -s | --http-port | -[Hh]ttp[Pp]ort)
         shift
-        httpPort="$1"
-        ;;
-    -u | --https-port | -[Hh]ttps[Pp]ort)
-        shift
         httpsPort="$1"
+        ;;
+    -u | --user | -[Uu]ser)
+        shift
+        user="$1"
         ;;
     -p | --pwd | -[Pp]wd)
         shift
@@ -416,7 +416,7 @@ read_var_from_user() {
     fi
 
     if [ -z "$fakeHost" ]; then
-        read -p "请输入伪装站点地址(如$fakeHostDefault):" fakeHost
+        read -p "请输入伪装站点地址(默认$fakeHostDefault):" fakeHost
         if [ -z "$fakeHost" ]; then
             fakeHost=$fakeHostDefault
         fi
