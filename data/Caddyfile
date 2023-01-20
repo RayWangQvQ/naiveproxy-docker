@@ -2,6 +2,7 @@
 	<debug>
 	http_port <httpPort>
 	https_port <httpsPort>
+	<autoHttps>
 	order forward_proxy before file_server
 }
 :<httpsPort>, <host> {
