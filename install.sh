@@ -232,6 +232,7 @@ host=""
 certMode=""
 certFile=""
 certKeyFile=""
+autoHttps=""
 
 mail=""
 
@@ -365,6 +366,7 @@ read_var_from_user() {
         fi
     else
         # say "certMode: 2（使用现有证书）"
+        autoHttps="auto_https disable_certs"
         if [ -z "$certKeyFile" ]; then
             read -p "请输入证书key文件路径:" certKeyFile
         else
@@ -499,6 +501,9 @@ replace_caddyfile_configs() {
 
     # replace httpsPort
     sed -i 's|<httpsPort>|'"$httpsPort"'|g' ./data/Caddyfile
+
+    # auto_https
+    sed -i 's|<autoHttps>|'"$autoHttps"'|g' ./data/Caddyfile
 
     # replace user
     sed -i 's|<user>|'"$user"'|g' ./data/Caddyfile

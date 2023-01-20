@@ -158,25 +158,34 @@ docker exec -it naiveproxy /app/caddy reload --config /data/Caddyfile
 举个栗子，多用户可以直接添加`forward_proxy`，像这样：
 
 ```
-:443, demo.test.tk #你的域名
-tls zhangsan@qq.com #你的邮箱
-route {
-        forward_proxy {
-                basic_auth zhangsan 1qaz@wsx #用户名和密码
-                hide_ip
-                hide_via
-                probe_resistance
-        }
-        forward_proxy {
-                basic_auth lisi 1234 #用户名和密码
-                hide_ip
-                hide_via
-                probe_resistance
-        }
-        reverse_proxy you.want.com {
-                #伪装网址
-                header_up Host {upstream_hostport}
-        }
+{
+	debug
+	http_port 80
+	https_port 443
+	order forward_proxy before file_server
+}
+:443, demo.test.tk {
+	tls zhangsan@qq.com
+	route {
+		# proxy
+		forward_proxy {
+			basic_auth zhangsan 1qaz@wsx
+			hide_ip
+			hide_via
+			probe_resistance
+		}
+		forward_proxy {
+			basic_auth lisi 1234
+			hide_ip
+			hide_via
+			probe_resistance
+		}
+
+		# 伪装网址
+		reverse_proxy you.want.com {
+			header_up Host {upstream_hostport}
+		}
+	}
 }
 ```
 
@@ -191,8 +200,8 @@ P.S.我发现naiveproxy插件版地caddy，Caddyfile里不支持`demo.test.tk:44
 ## 7. 常见问题
 ### 7.1. 端口可以自定义吗
 
-如果使用现有证书，可以自定义；如果要Caddy颁发，必须占有80端口。
+如果使用现有证书，可以自定义；如果要Caddy自动颁发，必须占有80端口。
 
-Caddy默认会占用80和443端口，如果选择让Caddy自动颁发并管理证书，当前官方镜像并不支持更改80端口，也就是一定需要占用80端口。
+Caddy默认会占用80和443端口，用来管理证书，当前官方镜像并不支持更改默认端口，也就是一定需要占用80端口。
 
-但当不需要Caddy颁发证书时（选择使用现有证书），则可以指定其他端口代替80端口。
+安装脚本可以选择证书模式，选择2使用现有证书，就可以不占用80和443端口了。

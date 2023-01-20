@@ -9,3 +9,6 @@
 - 无聊地为脚本添加一个logo
 - 重构优化脚本
 - 更新README
+
+## 0.1.1
+- [Fix（ #1 ）]使用现有证书时设置`auto_https`为`disable_certs`
