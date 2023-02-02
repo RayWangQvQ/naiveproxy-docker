@@ -12,3 +12,6 @@
 
 ## 0.1.1
 - [Fix（ #1 ）]使用现有证书时设置`auto_https`为`disable_certs`
+
+## 0.2.1
+- 发布镜像到ghcr
