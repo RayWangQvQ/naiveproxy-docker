@@ -97,16 +97,16 @@ jobs:
           echo "docker image tag: $DOCKER_IMAGE_TAGS"
           echo "dockerTags=$DOCKER_IMAGE_TAGS" >> $GITHUB_OUTPUT
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: |
-            zai7lou/naiveproxy-docker
-            ghcr.io/${{ github.repository }}
-          tags: |
-            type=raw,value=${{ steps.getRepoTag.outputs.repoTag }}
-            type=raw,value=latest
+      # - name: Extract metadata (tags, labels) for Docker
+      #   id: meta
+      #   uses: docker/metadata-action@v3
+      #   with:
+      #     images: |
+      #       zai7lou/naiveproxy-docker
+      #       ghcr.io/${{ github.repository }}
+      #     tags: |
+      #       type=raw,value=${{ steps.getRepoTag.outputs.repoTag }}
+      #       type=raw,value=latest
       -
         name: Build and push
         uses: docker/build-push-action@v2
@@ -114,5 +114,6 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            zai7lou/naiveproxy-docker:0.1.1
+            ghcr.io/${{ github.repository_owner }}/naiveproxy-docker:0.1.1
