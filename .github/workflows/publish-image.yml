@@ -116,4 +116,4 @@ jobs:
           push: true
           tags: |
             zai7lou/naiveproxy-docker:0.1.1
-            ghcr.io/${{ github.repository_owner }}/naiveproxy-docker:0.1.1
+            ghcr.io/raywangqvq/naiveproxy-docker:0.1.1
