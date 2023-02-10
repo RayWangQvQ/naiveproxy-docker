@@ -6,7 +6,7 @@ on:
       manualTag:
         description: 'Manual Tag'
         required: true
-      manualWithLatestTag:
+      autoWithLatestTag:
         description: 'Auto Add Latest Tag'
         required: true
         default: true
@@ -61,28 +61,24 @@ jobs:
           username: ${{ env.GHCR_USERNAME }}
           password: ${{ env.GHCR_PASSWORD }}
 
-      - name: GetDockerTagNames
-        id: getDockerTags
+      - name: Generate tags
+        id: tags
         run: |
-          DOCKER_IMAGE_TAG="zai7lou/naiveproxy-docker:${{ steps.getRepoTag.outputs.repoTag }}"
-          DOCKER_IMAGE_LATEST_TAG=",zai7lou/naiveproxy-docker:latest"
-          if [ "${{ github.event.inputs.manualTag }}" ] && [ "${{ github.event.inputs.manualWithLatestTag }}" == "false" ] ; then
-            DOCKER_IMAGE_LATEST_TAG=""
+          targetVersion="${{ steps.getTargetVersion.outputs.TargetVersion }}"
+          dockerImage="zai7lou/naiveproxy-docker"
+          ghcrImage="ghcr.io/raywangqvq/naiveproxy-docker"
+          dockerTagWithVersion="$dockerImage:$targetVersion"
+          ghcrTagWithVersion="$ghcrImage:$targetVersion"
+          dockerTagWithLatest=""
+          ghcrTagWithLatest=""
+          if [ "${{ github.event.inputs.autoWithLatestTag }}" == "true" ] ; then
+            dockerTagWithLatest="$dockerImage:latest"
+            ghcrTagWithLatest="$ghcrImage:latest"
           fi
-          DOCKER_IMAGE_TAGS=$DOCKER_IMAGE_TAG$DOCKER_IMAGE_LATEST_TAG
-          echo "docker image tag: $DOCKER_IMAGE_TAGS"
-          echo "dockerTags=$DOCKER_IMAGE_TAGS" >> $GITHUB_OUTPUT
-
-      # - name: Extract metadata (tags, labels) for Docker
-      #   id: meta
-      #   uses: docker/metadata-action@v3
-      #   with:
-      #     images: |
-      #       zai7lou/naiveproxy-docker
-      #       ghcr.io/${{ github.repository }}
-      #     tags: |
-      #       type=raw,value=${{ steps.getRepoTag.outputs.repoTag }}
-      #       type=raw,value=latest
+          echo "dockerTagWithVersion=$dockerTagWithVersion" >> $GITHUB_OUTPUT
+          echo "ghcrTagWithVersion=$ghcrTagWithVersion" >> $GITHUB_OUTPUT
+          echo "dockerTagWithLatest=$dockerTagWithLatest" >> $GITHUB_OUTPUT
+          echo "ghcrTagWithLatest=$ghcrTagWithLatest" >> $GITHUB_OUTPUT
       
       - name: Build and push
         uses: docker/build-push-action@v4
@@ -91,5 +87,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            zai7lou/naiveproxy-docker:${{ steps.getTargetVersion.outputs.TargetVersion }}
-            ghcr.io/raywangqvq/naiveproxy-docker:${{ steps.getTargetVersion.outputs.TargetVersion }}
+            ${{ steps.tags.outputs.dockerTagWithVersion }}
+            ${{ steps.tags.outputs.ghcrTagWithVersion }}
+            ${{ steps.tags.outputs.dockerTagWithLatest }}
+            ${{ steps.tags.outputs.ghcrTagWithLatest }}
