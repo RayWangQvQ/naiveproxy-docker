@@ -15,8 +15,8 @@ on:
     types: [published]
 
 env:
-  DOCKERHUB_USERNAME : ${{ secrets.DOCKERHUB_USERNAME }}
-  DOCKERHUB_PASSWORD : ${{ secrets.DOCKERHUB_PASSWORD }}
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
   GHCR_USERNAME: ${{ github.repository_owner }}
   GHCR_PASSWORD: ${{ env.DOCKERHUB_PASSWORD }}
 
@@ -24,7 +24,7 @@ jobs:
   PublishImage:
     runs-on: ubuntu-latest
     steps:
-      -  name: GetTargetVersion
+      - name: GetTargetVersion
         id: getTargetVersion
         run: |
           TargetVersion=""
